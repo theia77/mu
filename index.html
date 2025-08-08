@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>cmd.exe — Love Mixtape</title>
   <style>
-    /* Default to Amber theme; JS will load saved theme or default */
     :root {
       --bg: #0b0905;
       --panel: #100e09;
@@ -23,18 +22,15 @@
       background: var(--bg);
       color: var(--fg);
       font-family: var(--mono);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       transition: background 300ms ease-out;
     }
     .controls { max-width: 900px; margin: 8px auto 0; padding: 6px 10px; color: var(--accent); font-size: 12px; display: flex; align-items: center; gap: 16px; }
     .controls input[type="range"] { width: 120px; vertical-align: middle; }
-
     .window {
       max-width: 900px;
       margin: 16px auto 14px;
-      border: 1px solid var(--accent-2, #f00);
-      box-shadow: 0 0 0 1px var(--accent-2, #f00) inset, 0 0 24px var(--accent-2, #f00);
+      border: 1px solid var(--accent-2);
+      box-shadow: 0 0 10px var(--accent-2), 0 0 24px var(--accent-2);
       background: var(--panel);
       border-radius: 10px;
       overflow: hidden;
@@ -48,90 +44,38 @@
       background: rgba(0,0,0,0.2);
       color: var(--accent);
       font-size: 12px;
-      border-bottom: 1px solid var(--accent-2, #f00);
+      border-bottom: 1px solid var(--accent-2);
     }
     .titlebar .dots { display: flex; gap: 6px; margin-right: 8px; }
     .dot { width: 10px; height: 10px; border-radius: 50%; }
     .dot.red { background: #ff6b6b; }
     .dot.yellow { background: #ffd166; }
     .dot.green { background: #06d6a0; }
-    .title { user-select: none; }
-
     .screen {
       padding: 16px 18px 24px;
-      min-height: 60vh;
+      min-height: 50vh;
       line-height: 1.55;
       font-size: 16px;
       white-space: pre-wrap;
       color: var(--fg);
-      text-shadow: 0 0 8px var(--accent-2, #f00);
+      text-shadow: 0 0 8px var(--accent);
     }
     .prompt-line { color: var(--muted); }
-    .kbd {
-      background: var(--panel);
-      color: var(--accent);
-      padding: 2px 6px;
-      border: 1px solid var(--muted);
-      border-radius: 4px;
-    }
-    .cursor {
-      display: inline-block;
-      width: 10px;
-      height: 18px;
-      margin-left: 2px;
-      background: var(--caret);
-      vertical-align: baseline;
-      animation: blink 1s steps(1, end) infinite;
-    }
+    .kbd { background: var(--panel); color: var(--accent); padding: 2px 6px; border: 1px solid var(--muted); border-radius: 4px; }
+    .cursor { display: inline-block; width: 10px; height: 18px; margin-left: 2px; background: var(--caret); vertical-align: baseline; animation: blink 1s steps(1, end) infinite; }
     @keyframes blink { 50% { opacity: 0; } }
-
-    /* Player is now inside the screen */
-    .spotify-wrap {
-      margin: 18px 0;
-      animation: fadeIn 600ms ease forwards;
-    }
-    #spotify-embed {
-      border-radius: 12px;
-      width: 100%;
-      height: 352px;
-      border: 1px solid var(--muted);
-    }
+    .spotify-wrap { margin: 18px 0; animation: fadeIn 600ms ease forwards; display: none; }
+    #spotify-embed { border-radius: 12px; width: 100%; height: 352px; border: 1px solid var(--muted); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    #themeToggle {
-      position: fixed; right: 16px; bottom: 16px;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--accent);
-      background: var(--panel);
-      color: var(--accent);
-      cursor: pointer;
-      z-index: 100;
-    }
-    .now-playing {
-      position: fixed; left: 16px; bottom: 16px;
-      padding: 8px 12px; border-radius: 8px;
-      background: var(--panel);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      font-size: 12px;
-      z-index: 100;
-    }
-    #hearts { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 101;}
-    .heart-fx {
-      position: absolute; font-size: 16px; color: var(--accent-2);
-      animation: floatUp 1.2s ease-in forwards;
-    }
+    #themeToggle { position: fixed; right: 16px; bottom: 16px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--accent); background: var(--panel); color: var(--accent); cursor: pointer; z-index: 100; }
+    .now-playing { position: fixed; left: 16px; bottom: 16px; padding: 8px 12px; border-radius: 8px; background: var(--panel); color: var(--accent); border: 1px solid var(--accent); font-size: 12px; z-index: 100; display: none;}
+    #hearts { pointer-events: none; position: fixed; inset: 0; z-index: 101;}
+    .heart-fx { position: absolute; font-size: 16px; color: var(--accent-2); animation: floatUp 1.2s ease-in forwards; }
     @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
-    
-    /* Mobile responsive styles */
     @media (max-width: 600px) {
-      body { font-size: 14px; }
       .window { margin: 8px; }
       .screen { padding: 12px; font-size: 14px; min-height: 70vh; }
       .controls { flex-direction: column; gap: 8px; align-items: flex-start; }
-      #themeToggle { bottom: 10px; right: 10px; width: 40px; height: 40px;}
-      .now-playing { bottom: 10px; left: 10px; font-size: 11px; padding: 6px 10px;}
     }
   </style>
 </head>
@@ -140,24 +84,16 @@
     <label>Speed <input id="speedRange" type="range" min="0" max="40" value="24" /></label>
     <div id="theme-name">Theme: Amber</div>
   </div>
-
   <div class="window">
     <div class="titlebar">
-      <div class="dots">
-        <div class="dot red"></div>
-        <div class="dot yellow"></div>
-        <div class="dot green"></div>
-      </div>
+      <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
       <div class="title">C:\Windows\System32\cmd.exe — Love Mixtape</div>
     </div>
-    <div class="screen" id="screen" aria-live="polite">
-        <!-- Spotify player will be injected here by the script -->
-    </div>
+    <div class="screen" id="screen"></div>
   </div>
-
   <div id="hearts"></div>
   <button id="themeToggle" aria-label="Toggle theme" title="Toggle theme">♥</button>
-  <div id="nowPlaying" class="now-playing" style="display:none;">Now Playing: —</div>
+  <div id="nowPlaying" class="now-playing"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,15 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('themeToggle');
     const themeNameEl = document.getElementById('theme-name');
     let dedicateTo = localStorage.getItem('dedicateTo') || "You";
-    let audioCtx, clickBuffer;
+    let audioCtx;
+    const typing = { speed: 16, cmdSpeed: 26, linePause: 200 };
 
-    const typing = {
-        speed: 40 - (parseInt(localStorage.getItem('typingSpeed') || '24')),
-        cmdSpeed: 50 - (parseInt(localStorage.getItem('typingSpeed') || '24')),
-        linePause: 260
-    };
-    if (speedEl) speedEl.value = localStorage.getItem('typingSpeed') || '24';
-    
     // ------------- Themes -------------
     const THEMES = {
         amber: { name: 'Amber', vars: { '--bg': '#0b0905', '--panel': '#100e09', '--fg': '#ffbf69', '--muted': '#f1a94e', '--caret': '#ffb200', '--accent': '#ffe8b0', '--accent-2': '#ffa94d' } },
@@ -186,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ocean: { name: 'Ocean Deep', vars: { '--bg': '#020917', '--panel': '#061021', '--fg': '#cffafe', '--muted': '#a5f3fc', '--caret': '#67e8f9', '--accent': '#ecfeff', '--accent-2': '#22d3ee' } }
     };
     const themeKeys = Object.keys(THEMES);
-    let currentThemeIndex = themeKeys.indexOf(localStorage.getItem('mixtapeTheme')) !== -1 ? themeKeys.indexOf(localStorage.getItem('mixtapeTheme')) : 0;
+    let currentThemeIndex = Math.max(0, themeKeys.indexOf(localStorage.getItem('mixtapeTheme')));
 
     function applyTheme(key) {
         const theme = THEMES[key];
@@ -195,17 +125,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (themeNameEl) themeNameEl.textContent = `Theme: ${theme.name}`;
         localStorage.setItem('mixtapeTheme', key);
     }
-
-    // ------------- Terminal & Display Helpers -------------
-    const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className=cls; if(text) e.textContent=text; return e; };
-    const appendLine = (text = "", parent = screen) => { parent.appendChild(document.createTextNode(text + "\n")); };
-    const appendHTML = (html, parent = screen) => { const d = el("div"); d.innerHTML = html; parent.appendChild(d); };
-    const pause = (ms) => new Promise(r => setTimeout(r, ms));
-    const appendPrompt = (parent = screen) => { const p = el("div"); p.append(el("span", "prompt-line", "C:\\Users\\Heart> "), el("span", "prompt-input"), el("span", "cursor")); parent.appendChild(p); return p; };
-    const typeTextTo = (node, text) => new Promise(res => { let i = 0; const s = () => { if (i < text.length) { node.textContent += text[i++]; playClick(); setTimeout(s, typing.cmdSpeed); } else res(); }; s(); });
-    const slowOutput = async (text, speed = typing.speed) => { for (const ln of String(text).split("\n")) { appendLine(ln); await pause(speed); } };
     
-    // ------------- Interactive Features -------------
+    // ------------- Audio & Effects -------------
+    async function initAudio() {
+        if (audioCtx) return;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) { console.error("Audio context not supported"); }
+    }
+    function playSound(type = 'click') {
+        if (!audioCtx) return;
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        if (type === 'click') {
+            o.type = 'triangle';
+            o.frequency.setValueAtTime(1200, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+        } else { // Chime
+            o.type = 'sine';
+            o.frequency.setValueAtTime(type, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
+        }
+        o.start();
+        o.stop(audioCtx.currentTime + 0.5);
+    }
+    
+    // ------------- Terminal Helpers -------------
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className=cls; if(text) e.textContent=text; return e; };
+    const appendLine = (text = "", parent = screen) => parent.insertAdjacentText('beforeend', text + "\n");
+    const appendHTML = (html, parent = screen) => parent.insertAdjacentHTML('beforeend', html);
+    const pause = (ms) => new Promise(r => setTimeout(r, ms));
+    const appendPrompt = (parent = screen) => {
+        const p = el("div");
+        p.append(el("span", "prompt-line", "C:\\Users\\Heart> "), el("span", "prompt-input"), el("span", "cursor"));
+        parent.appendChild(p);
+        return p;
+    };
+    const typeTextTo = (node, text, speed) => new Promise(res => {
+        let i = 0;
+        const s = () => { if (i < text.length) { node.textContent += text[i++]; playSound(); setTimeout(s, speed); } else res(); };
+        s();
+    });
+    const slowOutput = async (text) => {
+        for (const ln of String(text).split("\n")) {
+            appendLine(ln);
+            screen.scrollTop = screen.scrollHeight;
+            await pause(typing.speed);
+        }
+    };
     const handleInput = (promptText) => new Promise(resolve => {
         const p = appendPrompt();
         p.querySelector('.prompt-input').textContent = promptText;
@@ -213,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         p.insertBefore(input, p.querySelector('.cursor'));
         let current = "";
         const onKey = (e) => {
-            if (e.key === 'Enter') { window.removeEventListener('keydown', onKey); p.querySelector('.cursor')?.remove(); appendLine(""); resolve(current.trim()); }
+            if (e.key === 'Enter') { window.removeEventListener('keydown', onKey); p.querySelector('.cursor')?.remove(); resolve(current.trim()); }
             else if (e.key === 'Backspace') { current = current.slice(0, -1); }
             else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) { current += e.key; }
             input.textContent = current;
@@ -222,76 +193,64 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('keydown', onKey);
     });
 
-    // ------------- Content & Script -------------
+    // ------------- Content & Script Definition -------------
     const ASCII_ROSE = '        ,----.        \n       _\\_  /--.      \n      ´´ \\ ` ´  `---. \n       ` ´    //´´´`´ \n        ´´   //        \n            //         \n           //          \n    \\_ _ _´´           ';
-    const WHISPERS = ["this one reminds me of you...", "for all the moments, big and small.", "our song.", "thinking of your smile.", "just for you."];
-    const SECRET_MEMORIES = ["The night we met under the stars.", "Our first coffee date.", "That time we laughed until we cried.", "Every quiet moment in between."];
-    const PLAYLIST = [{ title: "End of Beginning", artist: "Djo" }, { title: "Die With A Smile", artist: "Lady Gaga, Bruno Mars" }, { title: "Ordinary", artist: "Alex Warren" }, { title: "blue", artist: "yung kai" }, { title: "Belong Together", artist: "Mark Ambor" }, { title: "Until I Found You (with Em Beihold)", artist: "Stephen Sanchez, Em Beihold" }, { title: "Let Her Go (feat. Ed Sheeran)", artist: "Passenger" }, { title: "Infinity", artist: "Jaymes Young" }, { title: "Young And Beautiful", artist: "Lana Del Rey" }, { title: "Summertime Sadness", artist: "Lana Del Rey" }, { title: "Diet Mountain Dew", artist: "Lana Del Rey" }, { title: "Lay All Your Love On Me", artist: "ABBA" }, { title: "Mr. Loverman", artist: "Ricky Montgomery" }, { title: "I Wanna Be Yours", artist: "Arctic Monkeys" }, { title: "The Night We Met", artist: "Lord Huron" }, { title: "Night Changes", artist: "One Direction" }, { title: "Dandelions", artist: "Ruth B." }, { title: "Until I Found You", artist: "Stephen Sanchez" }, { title: "That’s So True", artist: "Gracie Abrams" }, { title: "Heather", artist: "Conan Gray" }, { title: "Apocalypse", artist: "Cigarettes After Sex" }, { title: "Runaway", artist: "AURORA" }, { title: "golden hour", artist: "JVKE" }, { title: "I Love You So", artist: "The Walters" }, { title: "Line Without a Hook", artist: "Ricky Montgomery" }, { title: "i'm yours", artist: "Isabel LaRosa" }, { title: "Let Me Down Slowly", artist: "Alec Benjamin" }, { title: "we fell in love in october", artist: "girl in red" }, { title: "deja vu", artist: "Olivia Rodrigo" }, { title: "Yellow", artist: "Coldplay" }];
+    const SECRET_MEMORIES = ["\nThe night we met under the stars.", "Our first coffee date.", "That time we laughed until we cried.", "Every quiet moment in between.\n"];
+    const PLAYLIST = [{ title: "End of Beginning", artist: "Djo" }, { title: "Die With A Smile", artist: "Lady Gaga, Bruno Mars" }, { title: "Ordinary", artist: "Alex Warren" }, { title: "blue", artist: "yung kai" }, { title: "Belong Together", artist: "Mark Ambor" }, { title: "Until I Found You", artist: "Stephen Sanchez" }, { title: "Let Her Go", artist: "Passenger" }, { title: "Infinity", artist: "Jaymes Young" }, { title: "Young And Beautiful", artist: "Lana Del Rey" }, { title: "Summertime Sadness", artist: "Lana Del Rey" }, { title: "I Wanna Be Yours", artist: "Arctic Monkeys" }];
 
     const script = [
         { type: "line", text: "Microsoft Windows [Version 10.0.19045]" }, { type: "line", text: "(c) Microsoft Corporation. All rights reserved." }, { type: "blank" },
-        { type: "prompt", text: "echo Compiling our story..." }, { type: "type", text: ASCII_ROSE, speed: 10 }, { type: "blank" },
+        { type: "prompt", text: "echo Compiling our story..." }, { type: "type", text: ASCII_ROSE }, { type: "blank" },
         { type: "input", prompt: "This mixtape is dedicated to: ", storeIn: "dedicateTo" },
         { type: "prompt", text: () => `echo Loading mixtape for ${dedicateTo}...` }, { type: "blank" },
         { type: "prompt", text: "dir /b playlist\\love\\" }, { type: "type", text: PLAYLIST.map((t, i) => `${String(i + 1).padStart(2, "0")} - ${t.title}.mp3`).join("\n") }, { type: "blank" },
-        { type: "action", fn: () => { playChime(740, 0.1); revealSpotifyEmbed(); } },
+        { type: "action", fn: revealSpotifyEmbed },
         { type: "type", text: () => `╔══════════════════════════════════════╗\n║  <3 Now playing for ${dedicateTo}  <3  ║\n╚══════════════════════════════════════╝` },
         ...playbackBlocks(PLAYLIST), { type: "blank" },
         { type: "prompt", text: "echo Playlist complete. My love for you is not." }, { type: "type", text: "Forever and always... <3" }, { type: "blank" },
-        { type: "action", fn: () => { setNowPlaying(null); playChime(523, 0.16); } },
+        { type: "action", fn: () => { setNowPlaying(null); playSound(523); } },
+        { type: "line", text: "Type 'memories' for a surprise, or 'exit' to close." },
         { type: "command_prompt" }
     ];
-
     function playbackBlocks(list) {
-        return list.flatMap((t, idx) => {
-            const block = [
-                { type: "prompt", text: `play "${t.title}.mp3"` },
-                { type: "action", fn: () => setNowPlaying(t.title) },
-                { type: "type", text: `[TRACK ${String(idx + 1).padStart(2,"0")}] ${t.title} - ${t.artist}` },
-            ];
-            if ((idx + 1) % 5 === 0) {
-                block.push({ type: "type", text: `REM whisper: ${WHISPERS[Math.floor(Math.random() * WHISPERS.length)]}` });
-            }
-            block.push({ type: "blank" });
-            return block;
-        });
-    }
-
-    // ------------- Runner -------------
-    async function run() {
-        initAudio();
-        screen.innerHTML = "";
-        appendHTML(`<div class="note">C:\\&gt; REM CMD Love Mixtape — Press <span class="kbd">Enter</span> to skip typing</div>`, screen);
-        appendLine("", screen);
-
-        for (const item of script) {
-            let text = typeof item.text === 'function' ? item.text() : item.text;
-            if (item.type === "line") { appendLine(text); await pause(typing.linePause); }
-            else if (item.type === "blank") { appendLine(""); await pause(typing.linePause / 2); }
-            else if (item.type === "prompt") { const p = appendPrompt(); await typeTextTo(p.querySelector('.prompt-input'), text); p.querySelector('.cursor')?.remove(); appendLine(""); await pause(typing.linePause); }
-            else if (item.type === "type") { await slowOutput(text, item.speed); }
-            else if (item.type === "input") { const result = await handleInput(item.prompt); if (result) { window[item.storeIn] = result; dedicateTo = result; localStorage.setItem('dedicateTo', result); } }
-            else if (item.type === "command_prompt") { await handleSecretCommands(); }
-            else if (item.type === "action") { await item.fn(); }
-        }
+        return list.flatMap((t, idx) => ([
+            { type: "prompt", text: `play "${t.title}.mp3"` },
+            { type: "action", fn: () => setNowPlaying(t.title) },
+            { type: "type", text: `[TRACK ${String(idx + 1).padStart(2,"0")}] ${t.title} - ${t.artist}` }
+        ]));
     }
     
-    // ------------- Post-Script Interactivity -------------
+    // ------------- Script Runner -------------
+    async function run() {
+        appendHTML(`<div class="note">C:\\&gt; REM CMD Love Mixtape — Press <span class="kbd">Enter</span> to skip typing</div>`);
+        for (const item of script) {
+            let text = typeof item.text === 'function' ? item.text() : item.text;
+            if (item.type === "line") { appendLine(text); }
+            else if (item.type === "blank") { appendLine(); }
+            else if (item.type === "prompt") { const p = appendPrompt(); await typeTextTo(p.querySelector('.prompt-input'), text, typing.cmdSpeed); p.querySelector('.cursor')?.remove(); }
+            else if (item.type === "type") { await slowOutput(text); }
+            else if (item.type === "input") { const result = await handleInput(item.prompt); if (result) { dedicateTo = result; localStorage.setItem('dedicateTo', result); } }
+            else if (item.type === "command_prompt") { await handleSecretCommands(); }
+            else if (item.type === "action") { await item.fn(); }
+            await pause(typing.linePause);
+        }
+    }
+
     async function handleSecretCommands() {
-        while(true) {
+        while (true) {
             const cmd = await handleInput("");
             if (cmd.toLowerCase() === 'memories') {
-                await slowOutput(`\nC:\\>type memories.txt\n\n${SECRET_MEMORIES.join('\n')}\n`);
+                await slowOutput(`\nC:\\>type memories.txt${SECRET_MEMORIES.join('\n')}\n`);
             } else if (cmd.toLowerCase() === 'exit') {
                 await slowOutput('Goodbye <3');
-                break;
+                return;
             } else if (cmd) {
-                await slowOutput(`'${cmd}' is not recognized as an internal or external command.`);
+                await slowOutput(`'${cmd}' is not recognized as a command.`);
             }
         }
     }
 
-    // ------------- Event Listeners -------------
+    // ------------- Event Listeners Setup -------------
     themeToggleBtn?.addEventListener('click', () => {
         currentThemeIndex = (currentThemeIndex + 1) % themeKeys.length;
         applyTheme(themeKeys[currentThemeIndex]);
@@ -302,31 +261,35 @@ document.addEventListener('DOMContentLoaded', () => {
         typing.cmdSpeed = 50 - val;
         localStorage.setItem('typingSpeed', val);
     });
-    
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            typing.speed = 0;
+            typing.cmdSpeed = 0;
+            setTimeout(() => {
+                const val = parseInt(speedEl.value, 10);
+                typing.speed = 40 - val;
+                typing.cmdSpeed = 50 - val;
+            }, 300);
+        }
+    }, { once: true });
+
     // ------------- Initialization -------------
     applyTheme(themeKeys[currentThemeIndex]);
+    document.body.addEventListener('click', initAudio, { once: true });
     run();
 });
 
-// Helper functions for spotify embed and effects
+// ------------- Global Helper Functions -------------
 function revealSpotifyEmbed() {
-    const spotifyHTML = `
-      <div id="spotify-embed-wrap" class="spotify-wrap" style="display:none;">
-        <iframe id="spotify-embed" tabindex="0"
-          src="https://open.spotify.com/embed/playlist/3Rx9zSZgNBRhkLMFkfO9Fz?utm_source=generator"
-          width="100%" height="352" frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"></iframe>
-      </div>`;
-    document.getElementById('screen').insertAdjacentHTML('beforeend', spotifyHTML);
-    const wrap = document.getElementById('spotify-embed-wrap');
+    appendHTML(`<div class="spotify-wrap"><iframe id="spotify-embed" tabindex="0" src="https://open.spotify.com/embed/playlist/3Rx9zSZgNBRhkLMFkfO9Fz?utm_source=generator" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>`);
+    const wrap = document.querySelector('.spotify-wrap');
     if (wrap) {
         wrap.style.display = 'block';
-        setTimeout(() => document.getElementById('spotify-embed')?.focus(), 200);
+        playSound(740);
+        burstHearts();
     }
-    burstHearts();
 }
-function setNowPlaying(title) { const el = document.getElementById('nowPlaying'); if (!el) return; el.style.display = title ? 'block' : 'none'; if(title) el.textContent = `Now Playing: ${title}`; }
+function setNowPlaying(title) { const el = document.getElementById('nowPlaying'); if(el) { el.style.display = title ? 'block' : 'none'; el.textContent = title ? `Now Playing: ${title}`: ''; }}
 function burstHearts(count = 18) { const c = document.getElementById('hearts'); if (!c) return; for (let i=0; i<count; i++) { const h = document.createElement('div'); h.className='heart-fx'; h.textContent='❤'; h.style.left = `${Math.random()*100}%`; h.style.animationDelay = `${Math.random()*0.4}s`; c.appendChild(h); setTimeout(()=>h.remove(), 1200);}}
 </script>
 </body>
